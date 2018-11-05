@@ -75,7 +75,6 @@ function commit_transaction() {
         esac
     done
     db_section_delete_between_regex \
-        "${db_file}" \
         "transaction_data" \
         "BEGIN ${transaction_id} [a-zA-Z0-9/+=]*" \
         "END ${transaction_id}" \
@@ -104,7 +103,6 @@ function add_to_transaction() {
 
     acquire_db_lock "${db_file}"
     db_section_insert_before_regex \
-        "${db_file}" \
         "transaction_data" \
         "END ${transaction_id}" \
         "${string_to_append}"

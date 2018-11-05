@@ -16,7 +16,7 @@ function acquire_lock() {
 function release_lock() {
     local file="${1}"
     local lockfile="${file}.lock"
-    rm "$(lockfile)"
+    rm "${lockfile}"
 }
 
 function acquire_db_lock() {

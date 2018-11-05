@@ -192,10 +192,16 @@ function assert() {
     local message="${1}"
     shift
     if ! "$@"; then
-        echo "Assertion failed"
-        echo "Message: ${message}"
-        exit 1
+        stderr "Assertion failed"
+        stderr "Message: ${message}"
+        panic "Internal error: assertion failed"
     fi
+}
+
+function panic() {
+    local message="${1}"
+    stderr "${message}"
+    exit 77
 }
 
 function logical_not() {
