@@ -131,35 +131,8 @@ function db_section_delete_between_regex() {
 
 function db_section_insert_before_regex() {
     local section_name="${1}"
-    local begin_regex="${2}"
-    local end_regex="${3}"
-    local include_begin="${4}"
-    local include_end="${5}"
-    assert \
-        "Invalid include/exclude argument passed to db_section_read_between_regex" \
-        [ "${include_begin}" == "include" -o "${include_begin}" == "exclude" ]
-    assert \
-        "Invalid include/exclude argument passed to db_section_read_between_regex" \
-        [ "${include_end}" == "include" -o "${include_end}" == "exclude" ]
-    local section_bounds="$(db_find_section "${section_name}")"
-    local section_begin_index="$(echo "${section_bounds}" | awk '{print $1}')"
-    local section_end_index="$(echo "${section_bounds}" | awk '{print $2}')"
-    local regex_begin_index="$(db_find_regex_between "${begin_regex}" "${section_begin_index}" "${section_end_index}")"
-    local regex_end_index="$(db_find_regex_between "${end_regex}" "${regex_begin_index}" "${section_end_index}")"
-    
-    if [[ "${include_begin}" == "exclude" ]]; then
-        (( ++regex_begin_index ))
-    fi
-    if [[ "${include_end}" == "include" ]]; then
-        (( --regex_end_index ))
-    fi
-    _db_io_data=("${_db_io_data[@]:0:${regex_begin_index}}" "${_db_io_data[@]:${regex_end_index}}")
-}
-
-function db_section_insert_before_regex() {
-    local section_name="${1}"
     local regex="${2}"
     local to_append="${3}"
-    local regex_index="$(db_find_regex_between $(db_find_section "${section_name}"))"
+    local regex_index="$(db_find_regex_between "${regex}" $(db_find_section "${section_name}"))"
     _db_io_data=("${_db_io_data[@]:0:${regex_index}}" "${to_append}" "${_db_io_data[@]:${regex_index}}")
 }

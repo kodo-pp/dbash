@@ -26,6 +26,10 @@ In development
 
 Currently implemented features:
 
+### Database
+- [ ] Initializing a database
+- [ ] Printing database information
+
 ### Transactions
 - [x] Creating a new transaction
 - [ ] Committing a transaction
@@ -34,7 +38,7 @@ Currently implemented features:
 - [ ] Printing information about a transaction
 
 ### Data
-- [ ] Adding a new key-value pair
+- [x] Adding a new key-value pair
 - [ ] Getting the value by a key
 - [ ] Removing a key-value pair
 - [ ] Modifying a value
@@ -47,6 +51,8 @@ Currently implemented features:
 - [ ] The database is being checked after reading
 - [x] Transaction IDs are validated
 - [ ] Key-value items are hash-verified
+- [ ] Database file format is identified by header
+- [ ] Modification availability is checked when appending to a transaction
 
 ## License
 DBash is distributed under conditions of GNU GPL license version 3 or later.

@@ -120,3 +120,25 @@ function generate_transaction_id() {
     local random_bytes=500
     head -c "${random_bytes}" /dev/urandom | sha256sum - | awk '{print $1}'
 }
+
+function action_add() {
+    set -x
+    parse_arguments \
+        -f str 'database file'  db_file        required \
+        -T str 'transaction id' transaction_id required \
+        -k str 'key'            key            required \
+        -v str 'value'          value          required \
+        -- "$@"
+    local db_file="$(get_argument 'db_file')"
+    local transaction_id="$(get_argument 'transaction_id')"
+    local key="$(get_argument 'key')"
+    local value="$(get_argument 'value')"
+    validate_transaction_id "${transaction_id}"
+
+    acquire_db_lock "${db_file}"
+    db_section_insert_before_regex \
+        "transaction_data" \
+        "^END ${transaction_id}\$" \
+        "add $(base64_encode "${key}") $(base64_encode "${value}")"
+    release_db_lock "${db_file}"
+}
