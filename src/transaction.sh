@@ -6,7 +6,6 @@ function action_begin_transaction() {
     local db_file="$(get_argument 'db_file')"
     local comment="$(get_argument 'transaction_comment' '')"
     begin_transaction "${db_file}" "${comment}"
-    echo "${transaction_id}"
 }
 
 function action_commit_transaction() {
@@ -41,6 +40,7 @@ function begin_transaction() {
     db_section_append "transaction_data" "BEGIN ${transaction_id} $(base64_encode "${comment}")"
     db_section_append "transaction_data" "END ${transaction_id}"
     release_db_lock "${db_file}"
+    echo "${transaction_id}"
 }
 
 function commit_transaction() {
@@ -111,7 +111,7 @@ function add_to_transaction() {
 
 function validate_transaction_id() {
     local transaction_id="${1}"
-    if ! [[ ${transaction_id} =~ [0-9a-fA-F]{64} ]]; then
+    if ! [[ ${transaction_id} =~ ^[0-9a-fA-F]{64}$ ]]; then
         panic "Invalid transaction id: ${transaction_id}"
     fi
 }

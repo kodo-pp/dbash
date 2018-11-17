@@ -188,30 +188,15 @@ function get_argument() {
     fi
 }
 
-function assert() {
-    local message="${1}"
-    shift
-    if ! "$@"; then
-        stderr "Assertion failed"
-        stderr "Message: ${message}"
-        panic "Internal error: assertion failed"
-    fi
-}
-
-function panic() {
-    local message="${1}"
-    stderr "${message}"
-    exit 77
-}
-
-function logical_not() {
-    if "$@"; then
-        return 1
-    else
-        return 0
-    fi
-}
-
-function stderr() {
-    echo "$@" >&2
+function action_help() {
+    echo "Usage dbash <subcommand> [arguments]"
+    echo "Available subcommands:"
+    echo "  begin-transaction     Start a transaction"
+    echo "  commit-transaction    Commit a transaction"
+    echo "  rollback-transaction  Cancel a transaction"
+    echo "  add                   Add a key-value pair"
+    echo "  remove                Remove a key-value pair"
+    echo "  version               Show version information and exit"
+    echo "For help for a specific subcommand see 'dbash <subcommand> --help'"
+    exit 1
 }

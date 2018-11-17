@@ -1,4 +1,7 @@
 function main() {
+    if ! [[ "${1+isset}" ]]; then
+        action_help
+    fi
     local top_level_action="${1}"
     shift
     case "${top_level_action}" in

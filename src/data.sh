@@ -1,0 +1,2 @@
+HELP_COMMAND=dbash
+MAIN_BASH_PROCESS="$$"

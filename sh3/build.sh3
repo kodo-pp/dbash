@@ -1,0 +1,4 @@
+D_SOURCES=(src)
+D_EXECUTABLE=dbash
+D_LINKER=shld
+D_LINKFLAGS='--preload preload.sh --postload postload.sh'

@@ -2,7 +2,7 @@ declare -ag _db_io_data=()
 
 function read_db() {
     local db_file="${1}"
-    readarray _db_io_data < "${db_file}"
+    readarray -t _db_io_data < "${db_file}"
 }
 
 function write_db() {
@@ -13,30 +13,21 @@ function write_db() {
 function db_section_append() {
     local section_name="${1}"
     local to_append="${2}"
-    local section_begin_index=0
-    local line
-    for line in "${_db_io_data[@]}"; do
-        if [[ "${line}" == ".${section_name}" ]]; then
-            break
-        fi
-        (( ++section_begin_index ))
-    done
-    local section_end_index="$(( ${section_begin_index} + 1 ))"
-    local length="${#_db_io_data[@]}"
-    while true; do
-        if [[ "${section_end_index}" -ge "${length}" ]]; then
-            break
-        fi
-        if [[ "${line:0:1}" == "." ]]; then
-            break
-        fi
-        (( ++section_end_index ))
-    done
-    local insert_index="$(( "${section_end_index}" - 1 ))"
+    local section_span=($(db_find_section "${section_name}"))
+    local section_begin_index="${section_span[0]}"
+    local section_end_index="${section_span[1]}"
+    stderr "db_section_append: begin_index = ${section_begin_index}"
+    stderr "db_section_append: end_index = ${section_end_index}"
+    local insert_index="${section_end_index}"
+    stderr "db_section_append: insert_index = ${insert_index}"
     _db_io_data=("${_db_io_data[@]:0:${insert_index}}" "${to_append}" "${_db_io_data[@]:${insert_index}}")
 }
 
 function db_find_section() {
+    local i
+    for (( i = 0; i < "${#_db_io_data[@]}"; ++i )); do
+        stderr "db[$i] = '${_db_io_data[$i]}'"
+    done
     local section_name="${1}"
     local length="${#_db_io_data[@]}"
     local section_begin_index=0
@@ -62,6 +53,7 @@ function db_find_section() {
         (( ++section_end_index ))
     done
     echo "${section_begin_index} ${section_end_index}"
+    stderr "db_find_section(...) = ${section_begin_index} ${section_end_index}"
 }
 
 function db_find_regex_between() {
@@ -72,6 +64,7 @@ function db_find_regex_between() {
     while [[ "${index}" -lt "${end_index}" ]]; do
         if [[ ${_db_io_data[${index}]} =~ ${regex} ]]; then
             echo "${index}"
+            stderr "db_find_regex_between(...) = ${index}"
             return 0
         fi
         (( ++index ))
@@ -128,10 +121,10 @@ function db_section_delete_between_regex() {
     local regex_end_index="$(db_find_regex_between "${end_regex}" "${regex_begin_index}" "${section_end_index}")"
     
     if [[ "${include_begin}" == "exclude" ]]; then
-        (( ++regex_begin_index ))
+        (( ++regex_begin_index )) || true
     fi
     if [[ "${include_end}" == "include" ]]; then
-        (( --regex_end_index ))
+        (( ++regex_end_index )) || true
     fi
     _db_io_data=("${_db_io_data[@]:0:${regex_begin_index}}" "${_db_io_data[@]:${regex_end_index}}")
 }
