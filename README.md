@@ -1,5 +1,5 @@
 # dbash
-Robust key-value storage implemented on bash
+Robust key-value storage implemented in bash
 
 This will be a database backend for Pak3
 
